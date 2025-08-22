@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Parcelas Dinâmica</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="container">
+        <h1>Controle de Pagamentos</h1>
+        
+        <table id="tabela-produtos">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Parcelas</th>
+                    <th>Valor da Parcela</th>
+                    <th>Total do Produto</th>
+                    <th>Parcelas Pagas</th>
+                </tr>
+            </thead>
+            <tbody id="corpo-tabela">
+                <tr>
+                    <td colspan="5">Carregando dados da planilha...</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="actions">
+            <button id="btn-salvar">Salvar Alterações na Planilha</button>
+            <div id="status-salvamento"></div>
+        </div>
+
+        <div id="resumo-financeiro">
+            <h2>Resumo</h2>
+            <p>Valor Total da Dívida: <span id="total-geral">R$ 0,00</span></p>
+            <p class="restante">Valor Restante a Pagar: <span id="total-restante">R$ 0,00</span></p>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
