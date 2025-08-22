@@ -134,3 +134,58 @@ input.parcelas-pagas:focus {
 #status-salvamento {
     font-weight: bold;
 }
+
+/* Estilos para tornar a tabela responsiva */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        margin-bottom: 20px;
+    }
+
+    thead th {
+        text-align: left;
+    }
+
+    th, td {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    td:nth-child(3), td:nth-child(4) {
+        min-width: 120px; /* Garante um espaço mínimo para os valores */
+    }
+
+    input.parcelas-pagas {
+        width: 50px;
+        padding: 6px;
+        font-size: 0.9em;
+    }
+
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #btn-salvar {
+        margin-bottom: 10px;
+    }
+
+    #resumo-financeiro h2 {
+        font-size: 1.2em;
+    }
+
+    #resumo-financeiro p {
+        font-size: 1em;
+    }
+}
