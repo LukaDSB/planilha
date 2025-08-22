@@ -97,8 +97,6 @@ input.parcelas-pagas:focus {
     font-size: 1.3rem;
 }
 
-/* ... (todo o CSS anterior continua igual) ... */
-
 /* Estilos para o novo botão e status */
 .actions {
     display: flex;
@@ -134,6 +132,14 @@ input.parcelas-pagas:focus {
 #status-salvamento {
     font-weight: bold;
 }
+
+/* --- BLOCO DE CÓDIGO NOVO --- */
+/* Estilo para a nova linha da fatura */
+#resumo-financeiro .fatura span {
+    color: #007bff; /* Cor azul para destacar a fatura */
+    font-size: 1.3rem;
+}
+
 
 /* Estilos para tornar a tabela responsiva */
 @media (max-width: 768px) {
@@ -187,5 +193,11 @@ input.parcelas-pagas:focus {
 
     #resumo-financeiro p {
         font-size: 1em;
+    }
+
+    /* --- AJUSTE NOVO --- */
+    #resumo-financeiro .fatura span,
+    #resumo-financeiro .restante span {
+        font-size: 1.2rem;
     }
 }

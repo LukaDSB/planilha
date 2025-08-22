@@ -3,14 +3,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlDoAppsScript = 'https://script.google.com/macros/s/AKfycbyAojRAVi3Xrm0Av3-x_M38bvUw27oLCKqVQOxmA6zAQYhP479UFEa2OHMlAB-C-Tql/exec';
     const urlPlanilha = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQhE4V2L_52xRkUwNSzE3Ud-zptB4cyZrZhIlQkPqp3MPHBzkfwhmyPllZYmsdIUE1s8x23GQyv-vFp/pub?gid=0&single=true&output=csv';
 
+    // --- NOVA VARIÁVEL ADICIONADA AQUI ---
     const corpoTabela = document.getElementById('corpo-tabela');
+    const spanFaturaAtual = document.getElementById('fatura-atual'); // Novo
     const spanTotalGeral = document.getElementById('total-geral');
     const spanTotalRestante = document.getElementById('total-restante');
     const btnSalvar = document.getElementById('btn-salvar');
     const statusSalvamento = document.getElementById('status-salvamento');
 
     const formatarMoeda = (valor) => {
-        // Adiciona uma verificação para não formatar NaN
         if (isNaN(valor)) {
             return 'R$ 0,00';
         }
@@ -24,30 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const dadosCSV = await resposta.text();
             
-            // Pula a primeira linha (cabeçalho) e processa o resto
             const linhas = dadosCSV.trim().split('\n').slice(1);
             
             corpoTabela.innerHTML = ''; 
 
             linhas.forEach(linha => {
-                // --- INÍCIO DA CORREÇÃO ---
-                // Lógica de parsing mais robusta para lidar com vírgulas dentro dos valores
                 const valores = linha.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) || [];
-
-                if (valores.length < 3) return; // Pula linhas malformadas
+                if (valores.length < 3) return;
 
                 const produto = valores[0].replace(/"/g, '');
                 const parcelaInfo = valores[1].replace(/"/g, '');
                 const valorParcelaStr = valores[2].replace(/"/g, '');
                 
-                // Lógica aprimorada para converter a string de moeda em número
                 const valorLimpo = valorParcelaStr.replace('R$ ', '').replace(/\./g, '').replace(',', '.');
                 const valorParcelaNumerico = parseFloat(valorLimpo);
-                // --- FIM DA CORREÇÃO ---
 
                 if (isNaN(valorParcelaNumerico)) {
                     console.error('Falha ao converter valor para o produto:', produto, 'Valor original:', valorParcelaStr);
-                    return; // Pula a criação da linha se o valor for inválido
+                    return;
                 }
 
                 const totalParcelas = parseInt(parcelaInfo.split('/')[1]);
@@ -75,11 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Nenhuma alteração necessária nas funções abaixo
+    // --- FUNÇÃO ATUALIZADA ---
     function adicionarListenersECalcular() {
         const todosInputs = document.querySelectorAll('.parcelas-pagas');
         
         const calcularTotais = () => {
+            let faturaAtual = 0; // Nova variável para o cálculo
             let totalGeral = 0;
             let totalPago = 0;
 
@@ -89,14 +85,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const totalParcelas = parseInt(inputPagas.max);
                 const parcelasPagas = parseInt(inputPagas.value) || 0;
 
-                // Garante que não estamos somando NaN
                 if (!isNaN(valorParcela) && !isNaN(totalParcelas) && !isNaN(parcelasPagas)) {
                     totalGeral += valorParcela * totalParcelas;
                     totalPago += valorParcela * parcelasPagas;
+                    
+                    // Condição para somar à fatura atual:
+                    // Se as parcelas pagas forem menores que o total, o item está ativo
+                    if (parcelasPagas < totalParcelas) {
+                        faturaAtual += valorParcela;
+                    }
                 }
             });
 
             const totalRestante = totalGeral - totalPago;
+            
+            // Atualiza todos os valores na tela
+            spanFaturaAtual.textContent = formatarMoeda(faturaAtual); // Novo
             spanTotalGeral.textContent = formatarMoeda(totalGeral);
             spanTotalRestante.textContent = formatarMoeda(totalRestante);
         };
@@ -125,18 +129,17 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSalvar.disabled = true;
 
         try {
-            const resposta = await fetch(urlDoAppsScript, {
+            await fetch(urlDoAppsScript, {
                 method: 'POST',
-                mode: 'no-cors', // Mudei para 'no-cors' que pode ajudar em alguns casos de deploy
+                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dadosParaEnviar)
             });
 
-            // Com 'no-cors', não podemos ler a resposta, então apenas assumimos o sucesso e recarregamos.
             statusSalvamento.textContent = 'Enviado! Atualizando...';
             setTimeout(() => {
                 statusSalvamento.textContent = '';
-                carregarDadosDaPlanilha(); // Recarrega os dados para confirmar a atualização
+                carregarDadosDaPlanilha();
             }, 2000);
 
         } catch (error) {
