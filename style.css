@@ -201,3 +201,49 @@ input.parcelas-pagas:focus {
         font-size: 1.2rem;
     }
 }
+
+/* style.css (Opcional) */
+.container-add {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border: 1px solid #ddd;
+}
+.form-add {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.form-add input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex-grow: 1;
+}
+.form-add button {
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.form-add button:hover {
+    background-color: #218838;
+}
+.buttonexc {
+    padding: 10px 15px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.buttonexc:hover {
+    background-color: red;
+}
+#status-adicao {
+    margin-top: 10px;
+    font-size: 0.9em;
+}

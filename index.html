@@ -10,6 +10,17 @@
 
     <main class="container">
         <h1>Controle de Pagamentos</h1>
+
+        <section class="container-add">
+            <h2>Adicionar Novo Produto</h2>
+            <form id="form-adicionar-produto" class="form-add">
+                <input type="text" id="nome-produto" placeholder="Nome do Produto" required>
+                <input type="number" id="valor-parcela-novo" placeholder="Valor da Parcela (ex: 109.58)" step="0.01" required>
+                <input type="number" id="total-parcelas-novo" placeholder="Nº Total de Parcelas" step="1" required>
+                <button type="submit" id="btn-adicionar">Adicionar</button>
+            </form>
+            <div id="status-adicao"></div>
+        </section>
         
         <table id="tabela-produtos">
             <thead>
@@ -19,11 +30,12 @@
                     <th>Valor da Parcela</th>
                     <th>Total do Produto</th>
                     <th>Parcelas Pagas</th>
+                    <th>Ações</th> 
                 </tr>
             </thead>
             <tbody id="corpo-tabela">
                 <tr>
-                    <td colspan="5">Carregando dados da planilha...</td>
+                    <td colspan="6">Carregando dados da planilha...</td>
                 </tr>
             </tbody>
         </table>
