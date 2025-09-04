@@ -1,4 +1,4 @@
-// script.js (Versão Final com Adicionar, Atualizar e Excluir)
+// script.js (Versão Final com Adicionar, Atualizar e Excluir CORRIGIDO)
 
 document.addEventListener('DOMContentLoaded', () => {
     // !!! IMPORTANTE !!! Cole aqui a URL do seu Script do Google
@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 tr.className = 'item-produto';
                 tr.dataset.produtoNome = produto;
                 
-                // --- ADICIONADO BOTÃO DE EXCLUIR NA ÚLTIMA CÉLULA (td) ---
                 tr.innerHTML = `
                     <td>${produto}</td>
                     <td class="parcela-info">${parcelaInfo}</td>
@@ -70,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             adicionarListenersDeAcao();
+            calcularTotais(); // Garante que o cálculo seja feito após carregar os dados
 
         } catch (error) {
             corpoTabela.innerHTML = `<tr><td colspan="6">Erro ao carregar dados: ${error.message}</td></tr>`;
@@ -77,33 +77,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    function adicionarListenersDeAcao() {
-        const calcularTotais = () => {
-            let faturaAtual = 0, totalGeral = 0, totalPago = 0;
-            document.querySelectorAll('.item-produto').forEach(linha => {
-                const valorParcela = parseFloat(linha.querySelector('.valor-parcela').dataset.valor);
-                const inputPagas = linha.querySelector('.parcelas-pagas');
-                const totalParcelas = parseInt(inputPagas.max);
-                const parcelasPagas = parseInt(inputPagas.value) || 0;
-                if (!isNaN(valorParcela)) {
-                    totalGeral += valorParcela * totalParcelas;
-                    totalPago += valorParcela * parcelasPagas;
-                    if (parcelasPagas < totalParcelas) {
-                        faturaAtual += valorParcela;
-                    }
+    function calcularTotais() {
+        let faturaAtual = 0, totalGeral = 0, totalPago = 0;
+        document.querySelectorAll('.item-produto').forEach(linha => {
+            const valorParcela = parseFloat(linha.querySelector('.valor-parcela').dataset.valor);
+            const inputPagas = linha.querySelector('.parcelas-pagas');
+            const totalParcelas = parseInt(inputPagas.max);
+            const parcelasPagas = parseInt(inputPagas.value) || 0;
+            if (!isNaN(valorParcela)) {
+                totalGeral += valorParcela * totalParcelas;
+                totalPago += valorParcela * parcelasPagas;
+                if (parcelasPagas < totalParcelas) {
+                    faturaAtual += valorParcela;
                 }
-            });
-            spanFaturaAtual.textContent = formatarMoeda(faturaAtual);
-            spanTotalGeral.textContent = formatarMoeda(totalGeral);
-            spanTotalRestante.textContent = formatarMoeda(totalGeral - totalPago);
-        };
-        
+            }
+        });
+        spanFaturaAtual.textContent = formatarMoeda(faturaAtual);
+        spanTotalGeral.textContent = formatarMoeda(totalGeral);
+        spanTotalRestante.textContent = formatarMoeda(totalGeral - totalPago);
+    };
+
+    function adicionarListenersDeAcao() {
         document.querySelectorAll('.parcelas-pagas').forEach(input => {
             input.addEventListener('input', calcularTotais);
         });
         
-        // --- NOVA LÓGICA PARA OS BOTÕES DE EXCLUIR ---
-        document.querySelectorAll('.btn-excluir').forEach(button => {
+        // --- CORREÇÃO APLICADA AQUI ---
+        // O seletor foi alterado de '.btn-excluir' para '.buttonexc' para corresponder ao HTML
+        document.querySelectorAll('.buttonexc').forEach(button => {
             button.addEventListener('click', async () => {
                 const nomeProduto = button.dataset.produtoNome;
                 const confirmado = confirm(`Tem certeza que deseja excluir o produto "${nomeProduto}"?\n\nEsta ação não pode ser desfeita.`);
@@ -114,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         data: { nomeProduto: nomeProduto }
                     };
                     
-                    // Mostra feedback visual imediato
                     const linhaParaExcluir = button.closest('tr');
                     linhaParaExcluir.style.opacity = '0.5';
                     linhaParaExcluir.style.pointerEvents = 'none';
@@ -122,25 +122,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     try {
                         await fetch(urlDoAppsScript, {
                             method: 'POST',
-                            mode: 'no-cors',
+                            mode: 'no-cors', 
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(payload)
                         });
                         
-                        // Recarrega os dados após um pequeno atraso para garantir que a planilha foi atualizada
                         setTimeout(() => carregarDadosDaPlanilha(), 1500);
 
                     } catch (error) {
                         console.error('Erro ao excluir:', error);
                         alert('Ocorreu um erro ao tentar excluir o produto.');
-                        linhaParaExcluir.style.opacity = '1'; // Restaura a aparência em caso de erro
+                        linhaParaExcluir.style.opacity = '1'; 
                         linhaParaExcluir.style.pointerEvents = 'auto';
                     }
                 }
             });
         });
-
-        calcularTotais();
     }
     
     // Lógica para Salvar Alterações (UPDATE)
