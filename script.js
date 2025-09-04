@@ -1,11 +1,7 @@
-// script.js (Com modal de confirmação)
-
 document.addEventListener('DOMContentLoaded', () => {
-    // !!! IMPORTANTE !!! Cole aqui a URL do seu Script do Google
     const urlDoAppsScript = 'https://script.google.com/macros/s/AKfycbyE1c81_5vqBAyqDldLD-Wmt2dwltAd069BF5iocG3dNSZnSuNH3RcmsCyE1QarDtu_/exec';
     const urlPlanilha = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQhE4V2L_52xRkUwNSzE3Ud-zptB4cyZrZhIlQkPqp3MPHBzkfwhmyPllZYmsdIUE1s8x23GQyv-vFp/pub?gid=0&single=true&output=csv';
 
-    // Referências aos elementos do DOM
     const corpoTabela = document.getElementById('corpo-tabela');
     const spanFaturaAtual = document.getElementById('fatura-atual');
     const spanTotalGeral = document.getElementById('total-geral');
@@ -19,12 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusAdicao = document.getElementById('status-adicao');
     const btnAdicionar = document.getElementById('btn-adicionar');
     
-    // --- NOVOS ELEMENTOS DA MODAL ---
     const modalOverlay = document.getElementById('modal-overlay');
     const modalProdutoNome = document.getElementById('modal-produto-nome');
     const btnModalCancelar = document.getElementById('btn-modal-cancelar');
     const btnModalConfirmar = document.getElementById('btn-modal-confirmar');
-    let produtoParaExcluir = null; // Variável para guardar a referência do produto a ser excluído
+    let produtoParaExcluir = null;
 
     const formatarMoeda = (valor) => {
         if (isNaN(valor)) return 'R$ 0,00';
@@ -32,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     async function carregarDadosDaPlanilha() {
-        // ... (código igual ao anterior)
         try {
             const resposta = await fetch(`${urlPlanilha}&timestamp=${new Date().getTime()}`);
             if (!resposta.ok) throw new Error('Falha ao carregar os dados da planilha.');
@@ -86,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function calcularTotais() {
-        // ... (código igual ao anterior)
         let faturaAtual = 0, totalGeral = 0, totalPago = 0;
         document.querySelectorAll('.item-produto').forEach(linha => {
             const valorParcela = parseFloat(linha.querySelector('.valor-parcela').dataset.valor);
@@ -113,15 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.querySelectorAll('.buttonexc').forEach(button => {
             button.addEventListener('click', () => {
-                // --- LÓGICA MODIFICADA PARA ABRIR A MODAL ---
-                produtoParaExcluir = button.dataset.produtoNome; // Armazena o nome do produto
-                modalProdutoNome.textContent = produtoParaExcluir; // Exibe o nome na modal
-                modalOverlay.classList.remove('hidden'); // Mostra a modal
+                produtoParaExcluir = button.dataset.produtoNome; 
+                modalProdutoNome.textContent = produtoParaExcluir; 
+                modalOverlay.classList.remove('hidden'); 
             });
         });
     }
     
-    // --- FUNÇÃO PARA EXECUTAR A EXCLUSÃO ---
     async function executarExclusao() {
         if (!produtoParaExcluir) return;
 
@@ -154,11 +145,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 linhaParaExcluir.style.pointerEvents = 'auto';
             }
         } finally {
-            produtoParaExcluir = null; // Limpa a variável
+            produtoParaExcluir = null;
         }
     }
     
-    // --- LISTENERS DOS BOTÕES DA MODAL ---
     btnModalConfirmar.addEventListener('click', () => {
         modalOverlay.classList.add('hidden');
         executarExclusao();
@@ -166,17 +156,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnModalCancelar.addEventListener('click', () => {
         modalOverlay.classList.add('hidden');
-        produtoParaExcluir = null; // Limpa a variável
+        produtoParaExcluir = null;
     });
 
     modalOverlay.addEventListener('click', (event) => {
         if (event.target === modalOverlay) {
             modalOverlay.classList.add('hidden');
-            produtoParaExcluir = null; // Limpa a variável
+            produtoParaExcluir = null;
         }
     });
 
-    // Lógica para Salvar Alterações (UPDATE) - Sem alterações
     btnSalvar.addEventListener('click', async () => {
         const dadosParaEnviar = Array.from(document.querySelectorAll('.item-produto')).map(linha => ({
             nomeProduto: linha.dataset.produtoNome,
@@ -202,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Lógica para Adicionar Produto (ADD) - Sem alterações
     formAdicionar.addEventListener('submit', async (event) => {
         event.preventDefault();
         const novoProduto = {
