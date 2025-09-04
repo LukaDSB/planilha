@@ -1,4 +1,6 @@
-/* Estilos Gerais */
+/* style.css (Versão Final Corrigida) */
+
+/* Estilos Gerais e Tipografia */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     background-color: #f4f7f9;
@@ -26,6 +28,41 @@ h1 {
     margin-bottom: 30px;
 }
 
+h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+/* Formulário de Adicionar Produto */
+.container-add {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border: 1px solid #ddd;
+}
+
+.form-add {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.form-add input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex-grow: 1;
+    min-width: 150px;
+}
+
+#status-adicao {
+    margin-top: 10px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
 /* Estilos da Tabela */
 table {
     width: 100%;
@@ -49,11 +86,11 @@ tbody tr:hover {
     background-color: #f8f9fa;
 }
 
-td:nth-child(3), td:nth-child(4) {
+td:nth-child(3),
+td:nth-child(4) {
     font-family: 'Courier New', Courier, monospace;
 }
 
-/* Estilos para o Input */
 input.parcelas-pagas {
     width: 60px;
     padding: 8px;
@@ -69,17 +106,64 @@ input.parcelas-pagas:focus {
     border-color: #007bff;
 }
 
-/* Estilos do Resumo */
+/* Botões de Ação */
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+button {
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#btn-adicionar,
+#btn-salvar {
+    background-color: #28a745;
+}
+
+#btn-adicionar:hover,
+#btn-salvar:hover {
+    background-color: #218838;
+}
+
+#btn-salvar:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+.buttonexc,
+.btn-danger {
+    background-color: #d9534f;
+    padding: 10px 15px;
+}
+
+.buttonexc:hover,
+.btn-danger:hover {
+    background-color: #c9302c;
+}
+
+#status-salvamento {
+    font-weight: bold;
+}
+
+/* Resumo Financeiro */
 #resumo-financeiro {
     background-color: #e9ecef;
     border-left: 5px solid #007bff;
     padding: 20px;
     border-radius: 8px;
-}
-
-#resumo-financeiro h2 {
-    margin-top: 0;
-    color: #333;
 }
 
 #resumo-financeiro p {
@@ -92,158 +176,75 @@ input.parcelas-pagas:focus {
     font-family: 'Courier New', Courier, monospace;
 }
 
-#resumo-financeiro .restante span {
-    color: #d9534f; /* Cor vermelha para destacar o valor a pagar */
-    font-size: 1.3rem;
-}
-
-/* Estilos para o novo botão e status */
-.actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-}
-
-#btn-salvar {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-#btn-salvar:hover {
-    background-color: #218838;
-}
-
-#btn-salvar:disabled {
-    background-color: #aaa;
-    cursor: not-allowed;
-}
-
-#status-salvamento {
-    font-weight: bold;
-}
-
-/* --- BLOCO DE CÓDIGO NOVO --- */
-/* Estilo para a nova linha da fatura */
 #resumo-financeiro .fatura span {
-    color: #007bff; /* Cor azul para destacar a fatura */
+    color: #007bff;
     font-size: 1.3rem;
 }
 
-
-/* Estilos para tornar a tabela responsiva */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 1.8em;
-        margin-bottom: 20px;
-    }
-
-    table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-        margin-bottom: 20px;
-    }
-
-    thead th {
-        text-align: left;
-    }
-
-    th, td {
-        padding: 10px;
-        font-size: 0.9em;
-    }
-
-    td:nth-child(3), td:nth-child(4) {
-        min-width: 120px; /* Garante um espaço mínimo para os valores */
-    }
-
-    input.parcelas-pagas {
-        width: 50px;
-        padding: 6px;
-        font-size: 0.9em;
-    }
-
-    .actions {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    #btn-salvar {
-        margin-bottom: 10px;
-    }
-
-    #resumo-financeiro h2 {
-        font-size: 1.2em;
-    }
-
-    #resumo-financeiro p {
-        font-size: 1em;
-    }
-
-    /* --- AJUSTE NOVO --- */
-    #resumo-financeiro .fatura span,
-    #resumo-financeiro .restante span {
-        font-size: 1.2rem;
-    }
+#resumo-financeiro .restante span {
+    color: #d9534f;
+    font-size: 1.3rem;
 }
 
-/* style.css (Opcional) */
-.container-add {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 25px;
-    border: 1px solid #ddd;
+/* ===== ESTILOS DA MODAL DE CONFIRMAÇÃO (CORRIGIDO) ===== */
+
+/* Esta regra agora é mais específica e garante que a modal fique escondida */
+#modal-overlay.hidden {
+    display: none;
 }
-.form-add {
+
+#modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
-    gap: 10px;
+    justify-content: center;
     align-items: center;
+    z-index: 1000;
 }
-.form-add input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    flex-grow: 1;
+
+#modal-confirmacao {
+    background: #ffffff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
 }
-.form-add button {
-    padding: 10px 15px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+
+#modal-confirmacao h2 {
+    border-bottom: none;
+    color: #333;
 }
-.form-add button:hover {
-    background-color: #218838;
-}
-.buttonexc {
-    padding: 10px 15px;
-    background-color: red;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.buttonexc:hover {
-    background-color: red;
-}
-#status-adicao {
-    margin-top: 10px;
+
+.aviso-modal {
     font-size: 0.9em;
+    color: #777;
+    margin-top: -10px; 
 }
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.modal-actions button {
+    padding: 10px 20px;
+}
+
+#btn-modal-cancelar {
+    background-color: #ccc;
+    color: #333;
+}
+
+#btn-modal-cancelar:hover {
+    background-color: #bbb;
+}
+
+/* Media Queries para Responsividade */

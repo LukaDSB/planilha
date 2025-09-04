@@ -1,8 +1,8 @@
-// script.js (Versão Final com Adicionar, Atualizar e Excluir CORRIGIDO)
+// script.js (Com modal de confirmação)
 
 document.addEventListener('DOMContentLoaded', () => {
     // !!! IMPORTANTE !!! Cole aqui a URL do seu Script do Google
-    const urlDoAppsScript = 'https://script.google.com/macros/s/AKfycbyE1c81_5vqBAyqDldLD-Wmt2dwltAd069BF5iocG3dNSZnSuNH3RcmsCyE1QarDtu_/exec'; // Verifique se é a URL da última implantação
+    const urlDoAppsScript = 'https://script.google.com/macros/s/AKfycbyE1c81_5vqBAyqDldLD-Wmt2dwltAd069BF5iocG3dNSZnSuNH3RcmsCyE1QarDtu_/exec';
     const urlPlanilha = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQhE4V2L_52xRkUwNSzE3Ud-zptB4cyZrZhIlQkPqp3MPHBzkfwhmyPllZYmsdIUE1s8x23GQyv-vFp/pub?gid=0&single=true&output=csv';
 
     // Referências aos elementos do DOM
@@ -18,6 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputTotalParcelas = document.getElementById('total-parcelas-novo');
     const statusAdicao = document.getElementById('status-adicao');
     const btnAdicionar = document.getElementById('btn-adicionar');
+    
+    // --- NOVOS ELEMENTOS DA MODAL ---
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalProdutoNome = document.getElementById('modal-produto-nome');
+    const btnModalCancelar = document.getElementById('btn-modal-cancelar');
+    const btnModalConfirmar = document.getElementById('btn-modal-confirmar');
+    let produtoParaExcluir = null; // Variável para guardar a referência do produto a ser excluído
 
     const formatarMoeda = (valor) => {
         if (isNaN(valor)) return 'R$ 0,00';
@@ -25,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     async function carregarDadosDaPlanilha() {
+        // ... (código igual ao anterior)
         try {
             const resposta = await fetch(`${urlPlanilha}&timestamp=${new Date().getTime()}`);
             if (!resposta.ok) throw new Error('Falha ao carregar os dados da planilha.');
@@ -69,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             adicionarListenersDeAcao();
-            calcularTotais(); // Garante que o cálculo seja feito após carregar os dados
+            calcularTotais();
 
         } catch (error) {
             corpoTabela.innerHTML = `<tr><td colspan="6">Erro ao carregar dados: ${error.message}</td></tr>`;
@@ -78,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function calcularTotais() {
+        // ... (código igual ao anterior)
         let faturaAtual = 0, totalGeral = 0, totalPago = 0;
         document.querySelectorAll('.item-produto').forEach(linha => {
             const valorParcela = parseFloat(linha.querySelector('.valor-parcela').dataset.valor);
@@ -102,45 +111,72 @@ document.addEventListener('DOMContentLoaded', () => {
             input.addEventListener('input', calcularTotais);
         });
         
-        // --- CORREÇÃO APLICADA AQUI ---
-        // O seletor foi alterado de '.btn-excluir' para '.buttonexc' para corresponder ao HTML
         document.querySelectorAll('.buttonexc').forEach(button => {
-            button.addEventListener('click', async () => {
-                const nomeProduto = button.dataset.produtoNome;
-                const confirmado = confirm(`Tem certeza que deseja excluir o produto "${nomeProduto}"?\n\nEsta ação não pode ser desfeita.`);
-
-                if (confirmado) {
-                    const payload = {
-                        action: 'delete',
-                        data: { nomeProduto: nomeProduto }
-                    };
-                    
-                    const linhaParaExcluir = button.closest('tr');
-                    linhaParaExcluir.style.opacity = '0.5';
-                    linhaParaExcluir.style.pointerEvents = 'none';
-
-                    try {
-                        await fetch(urlDoAppsScript, {
-                            method: 'POST',
-                            mode: 'no-cors', 
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-                        
-                        setTimeout(() => carregarDadosDaPlanilha(), 1500);
-
-                    } catch (error) {
-                        console.error('Erro ao excluir:', error);
-                        alert('Ocorreu um erro ao tentar excluir o produto.');
-                        linhaParaExcluir.style.opacity = '1'; 
-                        linhaParaExcluir.style.pointerEvents = 'auto';
-                    }
-                }
+            button.addEventListener('click', () => {
+                // --- LÓGICA MODIFICADA PARA ABRIR A MODAL ---
+                produtoParaExcluir = button.dataset.produtoNome; // Armazena o nome do produto
+                modalProdutoNome.textContent = produtoParaExcluir; // Exibe o nome na modal
+                modalOverlay.classList.remove('hidden'); // Mostra a modal
             });
         });
     }
     
-    // Lógica para Salvar Alterações (UPDATE)
+    // --- FUNÇÃO PARA EXECUTAR A EXCLUSÃO ---
+    async function executarExclusao() {
+        if (!produtoParaExcluir) return;
+
+        const payload = {
+            action: 'delete',
+            data: { nomeProduto: produtoParaExcluir }
+        };
+
+        const linhaParaExcluir = document.querySelector(`tr[data-produto-nome="${produtoParaExcluir}"]`);
+        if (linhaParaExcluir) {
+            linhaParaExcluir.style.opacity = '0.5';
+            linhaParaExcluir.style.pointerEvents = 'none';
+        }
+
+        try {
+            await fetch(urlDoAppsScript, {
+                method: 'POST',
+                mode: 'no-cors', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            setTimeout(() => carregarDadosDaPlanilha(), 1500);
+
+        } catch (error) {
+            console.error('Erro ao excluir:', error);
+            alert('Ocorreu um erro ao tentar excluir o produto.');
+            if (linhaParaExcluir) {
+                linhaParaExcluir.style.opacity = '1'; 
+                linhaParaExcluir.style.pointerEvents = 'auto';
+            }
+        } finally {
+            produtoParaExcluir = null; // Limpa a variável
+        }
+    }
+    
+    // --- LISTENERS DOS BOTÕES DA MODAL ---
+    btnModalConfirmar.addEventListener('click', () => {
+        modalOverlay.classList.add('hidden');
+        executarExclusao();
+    });
+
+    btnModalCancelar.addEventListener('click', () => {
+        modalOverlay.classList.add('hidden');
+        produtoParaExcluir = null; // Limpa a variável
+    });
+
+    modalOverlay.addEventListener('click', (event) => {
+        if (event.target === modalOverlay) {
+            modalOverlay.classList.add('hidden');
+            produtoParaExcluir = null; // Limpa a variável
+        }
+    });
+
+    // Lógica para Salvar Alterações (UPDATE) - Sem alterações
     btnSalvar.addEventListener('click', async () => {
         const dadosParaEnviar = Array.from(document.querySelectorAll('.item-produto')).map(linha => ({
             nomeProduto: linha.dataset.produtoNome,
@@ -166,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Lógica para Adicionar Produto (ADD)
+    // Lógica para Adicionar Produto (ADD) - Sem alterações
     formAdicionar.addEventListener('submit', async (event) => {
         event.preventDefault();
         const novoProduto = {
